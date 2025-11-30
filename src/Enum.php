@@ -46,6 +46,16 @@ abstract class Enum implements Enumeration
         }
     }
 
+    public function __isset(string $key): bool
+    {
+        return isset($this->attributes[$key]);
+    }
+
+    public function __unset(string $key): void
+    {
+        unset($this->attributes[$key]);
+    }
+
     public function __get(string $key): mixed
     {
         return $this->getAttribute($key);
