@@ -53,7 +53,9 @@ abstract class Enum implements Enumeration
 
     public function __unset(string $key): void
     {
-        unset($this->attributes[$key]);
+        if(isset($this->attributes[$key])){
+            unset($this->attributes[$key]);
+        }
     }
 
     public function __get(string $key): mixed
