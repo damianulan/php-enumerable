@@ -3,27 +3,33 @@
 namespace Enumerable;
 
 use ReflectionClass;
+use Enumerable\Contracts\Enumeration;
 
 /**
  * This is custom, more powerful and convenient enum class implementation.
+ *
+ * @property-read mixed       $value
+ * @property-read string|null $label
  *
  * @package damianulan/php-enumerable
  * @author Damian Ułan <damian.ulan@protonmail.com>
  * @copyright 2025 damianulan
  */
-abstract class Enum implements \UnitEnum, \BackedEnum
+abstract class Enum implements Enumeration
 {
-    /**
-     * The actual value of the enum instance.
-     */
-    public string|int $value;
+    protected array $attributes = [];
 
     /**
      * Cache of constants for each enum class.
      *
      * @var array<class-string, array<string, string|int>>
      */
-    protected static array $cache = array();
+    protected static array $cache = [];
+
+    protected static array $properties = [
+        'value',
+        'label',
+    ];
 
     /**
      * Enum constructor. Validates that the value exists in the enum.
@@ -35,12 +41,48 @@ abstract class Enum implements \UnitEnum, \BackedEnum
     public function __construct($value = null)
     {
         if ( ! is_null($value)) {
-            if ( ! in_array($value, static::values(), true)) {
-                throw new \InvalidArgumentException('Invalid enum value: ' . $value);
-            }
-
-            $this->value = $value;
+            $this->setAttribute('value', $value);
+            $this->setAttribute('label', static::labels()[$value] ?? null);
         }
+    }
+
+    public function __get(string $key): mixed
+    {
+        return $this->getAttribute($key);
+    }
+
+    public function __set(string $key, $value): void
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    public function hasAttribute(string $key): bool
+    {
+        return isset($this->attributes[$key]);
+    }
+
+    public function getAttribute(string $key)
+    {
+        if(!isset($this->attributes[$key])){
+            throw new \Exception("Attribute '$key' is not defined.");
+        }
+        return $this->attributes[$key];
+    }
+
+    public function setAttribute(string $key, $value): void
+    {
+        if($value === '' && $value !== 0 && $value !== false){
+            throw new \Exception('attribute cannot be empty.');
+        }
+        if($key === 'value'){
+            if ( ! in_array($value, static::values(), true)) {
+                throw new \InvalidArgumentException('Invalid enumeration value: ' . $value. ' for ' . static::class);
+            }
+        }
+        if(!in_array($key, static::$properties)){
+            throw new \InvalidArgumentException("Cannot assign a property '$key' to an enum class.");
+        }
+        $this->attributes[$key] = $value;
     }
 
     /**
@@ -48,7 +90,7 @@ abstract class Enum implements \UnitEnum, \BackedEnum
      */
     public function __toString(): string
     {
-        return $this->value ?? '';
+        return $this->getAttribute('value') ?? '';
     }
 
     /**
@@ -75,10 +117,6 @@ abstract class Enum implements \UnitEnum, \BackedEnum
         return array();
     }
 
-    /**
-     * Returns an associative array of constant names to values.
-     * Uses reflection and caches the result.
-     */
     public static function cases(): array
     {
         $class = static::class;
@@ -100,28 +138,17 @@ abstract class Enum implements \UnitEnum, \BackedEnum
         return $collection;
     }
 
-    /**
-     * Creates a new enum instance from a given value.
-     */
     public static function fromValue(string|int $value): static
     {
         return new static($value);
     }
 
-    /**
-     * Mimics BackedEnum::from — returns enum or throws.
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function from(string|int $value): static
+    public static function from($value): static
     {
         return new static($value);
     }
 
-    /**
-     * Mimics BackedEnum::tryFrom — returns enum or null.
-     */
-    public static function tryFrom(string|int $value): ?static
+    public static function tryFrom($value): ?static
     {
         try {
             return new static($value);
@@ -136,14 +163,6 @@ abstract class Enum implements \UnitEnum, \BackedEnum
     public function value(): string|int
     {
         return $this->value;
-    }
-
-    /**
-     * Returns the human-readable label for the enum value.
-     */
-    public function label(): string
-    {
-        return static::labels()[$this->value] ?? (string) $this->value;
     }
 
     /**
@@ -165,9 +184,13 @@ abstract class Enum implements \UnitEnum, \BackedEnum
     /**
      * Compares this enum with another for equality.
      */
-    public function equals(Enum $enum): bool
+    public function equals(Enum $enum, bool $strict_type = false): bool
     {
-        return static::class === get_class($enum) && $this->value === $enum->value();
+        return (static::class === get_class($enum) || ! $strict_type) && $this->value === $enum->value();
     }
 
+    public function count(): int
+    {
+        return count(static::values());
+    }
 }

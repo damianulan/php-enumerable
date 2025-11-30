@@ -2,11 +2,15 @@
 
 namespace Enumerable;
 
+use Enumerable\Support\EnumCollection;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * This is custom, more powerful and convenient enum class implementation.
+ * This is custom, more powerful and convenient enum class implementation in Laravel.
+ *
+ * @property-read mixed       $value
+ * @property-read string|null $label
  *
  * @package damianulan/php-enumerable
  * @author Damian Ułan <damian.ulan@protonmail.com>
@@ -14,6 +18,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class LaraEnum extends Enum implements CastsAttributes
 {
+    /**
+     * Returns cases() result as Laravel Collection.
+     *
+     * @return \Enumerable\Support\EnumCollection
+     */
+    public static function collection(): EnumCollection
+    {
+        $cases = static::cases();
+        return EnumCollection::make($cases);
+    }
+
     /**
      * Cast the given value.
      *
