@@ -1,11 +1,11 @@
 {
   "name": "damianulan/php-enumerable",
   "type": "library",
-  "description": "Extensive enum classes for plain PHP and Laravel projects",
+  "description": "Extensive enum class support for plain PHP and Laravel projects",
   "keywords": [
     "laravel",
     "php",
-    "enumerations",
+    "enumeration",
     "enum"
   ],
   "license": "MIT",
