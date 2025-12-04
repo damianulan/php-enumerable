@@ -1,10 +1,11 @@
 <?php
 
-namespace Enumerable;
+namespace Enumerable\Laravel;
 
-use Enumerable\Support\EnumCollection;
+use Enumerable\Support\Laravel\EnumCollection;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use Enumerable\Enum as BaseEnum;
 
 /**
  * This is custom, more powerful and convenient enum class implementation in Laravel.
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @author Damian Ułan <damian.ulan@protonmail.com>
  * @copyright 2025 damianulan
  */
-abstract class LaraEnum extends Enum implements CastsAttributes
+abstract class Enum extends BaseEnum implements CastsAttributes
 {
     /**
      * Returns cases() result as Laravel Collection.

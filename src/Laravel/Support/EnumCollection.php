@@ -1,6 +1,6 @@
 <?php
 
-namespace Enumerable\Support;
+namespace Enumerable\Laravel\Support;
 
 use Illuminate\Support\Collection;
 

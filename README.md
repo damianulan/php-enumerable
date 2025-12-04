@@ -17,8 +17,8 @@ The package will automatically register itself.
 
 ## Usage
 
-Use `Enum` class to create enumeration in plain php, in laravel project use `LaraEnum` class, which provides additional casting support.
-Class `Enum` instances mimic implementation of [BackedEnum](https://www.php.net/manual/en/class.backedenum.php) and [UnitEnum](https://www.php.net/manual/en/class.unitenum.php).
+Use `Enumerable\Enum` class to create enumeration in plain php, in laravel project use `Enumerable\Laravel\Enum` class, which provides additional casting support.
+Class `Enumerable\Enum` instances mimic implementation of [BackedEnum](https://www.php.net/manual/en/class.backedenum.php) and [UnitEnum](https://www.php.net/manual/en/class.unitenum.php).
 
 ```php
 use Enumerable\Enum;
@@ -48,7 +48,7 @@ $stage->value; // returns enum value
 StageEnum::Pending; // returns enum value, not its instance
 ```
 
-In Laravel assign your `LaraEnum` to yout model's `casts` property:
+In Laravel assign your `Enumerable\Laravel\Enum` to yout model's `casts` property:
 ```php
 protected $casts = array(
     'stage' => StageEnum::class,
